@@ -5,17 +5,18 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.appoftrainee.ui.screens.home_screen.HomeScreen
 
 
 @Composable
 fun NavigationGraph(modifier: Modifier = Modifier, navController: NavHostController)  {
     NavHost(
         navController = navController,
-        startDestination = Screens.MainScreen.route,
+        startDestination = Screens.HomeScreen.route,
         modifier = modifier
     ) {
-        composable(Screens.MainScreen.route) {
-
+        composable(Screens.HomeScreen.route) {
+            HomeScreen()
         }
         composable(
             Screens.DetailsScreen.route,

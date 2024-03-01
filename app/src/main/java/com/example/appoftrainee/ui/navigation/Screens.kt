@@ -7,7 +7,7 @@ import androidx.navigation.navArgument
 
 sealed class Screens(val route: String, val argumentList: List<NamedNavArgument> = emptyList()) {
 
-    data object MainScreen : Screens(SCREEN_MAIN)
+    data object HomeScreen : Screens(SCREEN_MAIN)
 
     data object DetailsScreen : Screens(
         "$SCREEN_DETAILS/{$ARGUMENT_DETAILS}",

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home screen -->
+    <dimen name="home_screen.persons_list.items.spacer.height">8dp</dimen>
+    <dimen name="home_screen.persons_list.items.padding_horizontal">8dp</dimen>
+    <dimen name="home_screen.persons_list.items.photo.size">72dp</dimen>
+    <dimen name="home_screen.persons_list.items.photo.padding_end">12dp</dimen>
+    <dimen name="home_screen.persons_list.items.name.padding_bottom">8dp</dimen>
+
+</resources>

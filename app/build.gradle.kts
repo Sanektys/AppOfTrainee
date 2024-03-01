@@ -65,6 +65,9 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
 
+    // Coil (images download)
+    implementation(libs.coil)
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.compose.bom))
