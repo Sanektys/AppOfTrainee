@@ -122,6 +122,7 @@ fun PersonsEmail(modifier: Modifier = Modifier, email: String) {
         }
         pop()
     }
+    val context = LocalContext.current
 
     ClickableText(
         modifier = modifier,
@@ -129,8 +130,8 @@ fun PersonsEmail(modifier: Modifier = Modifier, email: String) {
         onClick = { offset ->
             emailString
                 .getStringAnnotations(tag = EMAIL_ANNOTATION_TAG, start = offset, end = offset)
-                .firstOrNull()?.let { email ->
-
+                .firstOrNull()?.let { emailRecipient ->
+                    composeEmail(context, emailRecipient.item)
                 }
         },
         style = MaterialTheme.typography.bodyMedium
@@ -153,12 +154,19 @@ fun PersonsTelephoneNumber(
         }
         pop()
     }
+    val context = LocalContext.current
 
     ClickableText(
         modifier = modifier,
         text = telephoneNumber,
         onClick = { offset ->
-
+            telephoneNumber.getStringAnnotations(
+                tag = PHONE_NUMBER_ANNOTATION_TAG,
+                start = offset,
+                end = offset
+            ).firstOrNull()?.let { phoneNumber ->
+                dialPhoneNumber(context, phoneNumber.item)
+            }
         },
         style = MaterialTheme.typography.bodyMedium
     )
@@ -195,10 +203,15 @@ fun PersonsAddress(
         appendLine()
         append(street)
     }
+    val context = LocalContext.current
 
     Row(
         modifier = modifier.clickable {
-
+            showInMap(
+                context = context,
+                latitude = "56.512172",
+                longitude = "85.034196",
+            )
         }
     ) {
         Text(
@@ -210,6 +223,34 @@ fun PersonsAddress(
             text = factualAddress,
             style = MaterialTheme.typography.bodyMedium
         )
+    }
+}
+
+private fun composeEmail(context: Context, recipient: String) {
+    val intent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:")
+        putExtra(Intent.EXTRA_EMAIL, recipient)
+    }
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    }
+}
+
+private fun dialPhoneNumber(context: Context, phoneNumber: String) {
+    val intent = Intent(Intent.ACTION_DIAL).apply {
+        data = Uri.parse("tel:$phoneNumber")
+    }
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    }
+}
+
+private fun showInMap(context: Context, latitude: String, longitude: String, ) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse("geo:0,0?q=$latitude,$longitude(${context.getString(R.string.details_screen_location_message)})")
+    }
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
     }
 }
 
