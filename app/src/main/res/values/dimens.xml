@@ -7,4 +7,14 @@
     <dimen name="home_screen.persons_list.items.photo.padding_end">12dp</dimen>
     <dimen name="home_screen.persons_list.items.name.padding_bottom">8dp</dimen>
 
+    <!-- Details screen -->
+    <dimen name="details_screen.photo.size">140dp</dimen>
+    <dimen name="details_screen.photo.padding">16dp</dimen>
+    <dimen name="details_screen.name.padding_bottom">4dp</dimen>
+    <dimen name="details_screen.sex_age.alpha">0.7</dimen>
+    <dimen name="details_screen.top_divider.padding_top">32dp</dimen>
+    <dimen name="details_screen.divider.padding_vertical">8dp</dimen>
+    <dimen name="details_screen.field.padding_horizontal">8dp</dimen>
+    <dimen name="details_screen.telephone.spacer.height">4dp</dimen>
+    <dimen name="details_screen.location.spacer.width">8dp</dimen>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.appoftrainee.ui.screens.home_screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,18 +12,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.appoftrainee.R
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    clickToDetails: (String) -> Unit = {}
+) {
     val lazyColumnState = rememberLazyListState()
 
     LazyColumn(
@@ -33,7 +39,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             if (index == 0) {
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.home_screen_persons_list_items_spacer_height)))
             }
-            PersonCardItem()
+            PersonCardItem(clickToDetails = clickToDetails)
             if (index < 32) {
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.home_screen_persons_list_items_spacer_height)))
             }
@@ -42,9 +48,15 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PersonCardItem(modifier: Modifier = Modifier) {
+fun PersonCardItem(
+    modifier: Modifier = Modifier,
+    clickToDetails: (String) -> Unit
+) {
     Row(
-        modifier = modifier.padding(horizontal = dimensionResource(R.dimen.home_screen_persons_list_items_padding_horizontal)),
+        modifier = modifier
+            .clickable { clickToDetails("shesterovID") }
+            .fillMaxWidth()
+            .padding(horizontal = dimensionResource(R.dimen.home_screen_persons_list_items_padding_horizontal)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -70,5 +82,13 @@ fun PersonCardItem(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodySmall
             )
         }
+    }
+}
+
+
+@[Composable Preview]
+fun HomeScreenPreview() {
+    Surface {
+        HomeScreen()
     }
 }

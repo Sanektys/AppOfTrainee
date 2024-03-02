@@ -11,17 +11,17 @@ sealed class Screens(val route: String, val argumentList: List<NamedNavArgument>
 
     data object DetailsScreen : Screens(
         "$SCREEN_DETAILS/{$ARGUMENT_DETAILS}",
-        listOf(navArgument(ARGUMENT_DETAILS) { NavType.StringType })
+        listOf(navArgument(ARGUMENT_DETAILS) { type = NavType.StringType })
     ) {
-        fun resolveRoute(argument: String) = "$route/$argument"
+        fun resolveRoute(argument: String) = "$SCREEN_DETAILS/$argument"
         fun getArgumentKey() = ARGUMENT_DETAILS
     }
 
 
     companion object {
-        const val SCREEN_MAIN = "main_screen"
-        const val SCREEN_DETAILS = "details_screen"
+        private const val SCREEN_MAIN = "main_screen"
+        private const val SCREEN_DETAILS = "details_screen"
 
-        const val ARGUMENT_DETAILS = "person_id"
+        private const val ARGUMENT_DETAILS = "person_id"
     }
 }
