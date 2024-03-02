@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -108,21 +109,24 @@ fun DetailsScreen(
 
 @Composable
 fun PersonsEmail(modifier: Modifier = Modifier, email: String) {
-    val emailString = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
-            append(stringResource(R.string.details_screen_email) + ": ")
-        }
-        pushStringAnnotation(tag = EMAIL_ANNOTATION_TAG, annotation = email)
-        withStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-            )
-        ) {
-            append(email)
-        }
-        pop()
-    }
     val context = LocalContext.current
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val emailString = remember(email) {
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
+                append(context.getString(R.string.details_screen_email) + ": ")
+            }
+            pushStringAnnotation(tag = EMAIL_ANNOTATION_TAG, annotation = email)
+            withStyle(
+                style = SpanStyle(
+                    color = primaryColor,
+                )
+            ) {
+                append(email)
+            }
+            pop()
+        }
+    }
 
     ClickableText(
         modifier = modifier,
@@ -144,17 +148,20 @@ fun PersonsTelephoneNumber(
     phoneTypeName: String,
     telephone: String
 ) {
-    val telephoneNumber = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
-            append("$phoneTypeName: ")
-        }
-        pushStringAnnotation(tag = PHONE_NUMBER_ANNOTATION_TAG, annotation = telephone)
-        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-            append(telephone)
-        }
-        pop()
-    }
     val context = LocalContext.current
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val telephoneNumber = remember(phoneTypeName, telephone) {
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
+                append("$phoneTypeName: ")
+            }
+            pushStringAnnotation(tag = PHONE_NUMBER_ANNOTATION_TAG, annotation = telephone)
+            withStyle(style = SpanStyle(color = primaryColor)) {
+                append(telephone)
+            }
+            pop()
+        }
+    }
 
     ClickableText(
         modifier = modifier,
@@ -180,30 +187,34 @@ fun PersonsAddress(
     city: String,
     street: String
 ) {
-    val address = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontWeight =  FontWeight.Medium)) {
-            append(stringResource(R.string.details_screen_location))
-        }
-        append("\n\t")
-        append(stringResource(R.string.details_screen_location_country) + ':')
-        append("\n\t")
-        append(stringResource(R.string.details_screen_location_state) + ':')
-        append("\n\t")
-        append(stringResource(R.string.details_screen_location_city) + ':')
-        append("\n\t")
-        append(stringResource(R.string.details_screen_location_street) + ':')
-    }
-    val factualAddress = buildAnnotatedString {
-        appendLine()
-        append(country)
-        appendLine()
-        append(state)
-        appendLine()
-        append(city)
-        appendLine()
-        append(street)
-    }
     val context = LocalContext.current
+    val address = remember {
+        buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
+                append(context.getString(R.string.details_screen_location))
+            }
+            append("\n\t")
+            append(context.getString(R.string.details_screen_location_country) + ':')
+            append("\n\t")
+            append(context.getString(R.string.details_screen_location_state) + ':')
+            append("\n\t")
+            append(context.getString(R.string.details_screen_location_city) + ':')
+            append("\n\t")
+            append(context.getString(R.string.details_screen_location_street) + ':')
+        }
+    }
+    val factualAddress = remember(country, state, city, street) {
+        buildAnnotatedString {
+            appendLine()
+            append(country)
+            appendLine()
+            append(state)
+            appendLine()
+            append(city)
+            appendLine()
+            append(street)
+        }
+    }
 
     Row(
         modifier = modifier.clickable {
@@ -245,7 +256,7 @@ private fun dialPhoneNumber(context: Context, phoneNumber: String) {
     }
 }
 
-private fun showInMap(context: Context, latitude: String, longitude: String, ) {
+private fun showInMap(context: Context, latitude: String, longitude: String) {
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse("geo:0,0?q=$latitude,$longitude(${context.getString(R.string.details_screen_location_message)})")
     }
