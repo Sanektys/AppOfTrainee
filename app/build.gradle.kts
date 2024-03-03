@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -39,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -67,6 +69,21 @@ dependencies {
 
     // Coil (images download)
     implementation(libs.coil)
+
+    // Dagger
+    implementation(libs.dagger.android)
+    ksp(libs.dagger.compiler)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
+    // OkHttpInterceptor
+    implementation(libs.okhttp.interceptor)
+
+    // Room
+    implementation(libs.room)
+    ksp(libs.room.compiler)
 
     // Tests
     testImplementation(libs.junit)

@@ -1,4 +1,4 @@
-package com.example.appoftrainee
+package com.example.appoftrainee.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
