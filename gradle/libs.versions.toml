@@ -64,6 +64,7 @@ okhttp-interceptor = { group = "com.squareup.okhttp3", name = "logging-intercept
 
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 
 [plugins]
