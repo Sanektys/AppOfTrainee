@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface RandomUserApi {
 
-    @GET("/?exc=login,nat,registered")
+    @GET("?exc=login,nat,registered")
     suspend fun getUsers(
         @Query("results") numberOfUsers: Int
     ): RandomUserResultDto

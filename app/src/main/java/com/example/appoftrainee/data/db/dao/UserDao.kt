@@ -22,7 +22,7 @@ abstract class UserDao {
     abstract suspend fun deleteAllUsers()
 
     @Transaction
-    suspend fun deleteAllUsersAndPutNew(users: List<UserProfile>) {
+    open suspend fun deleteAllUsersAndPutNew(users: List<UserProfile>) {
         deleteAllUsers()
         insertUsers(users)
     }

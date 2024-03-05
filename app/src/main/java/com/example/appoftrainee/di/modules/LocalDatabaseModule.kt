@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Room
 import com.example.appoftrainee.data.db.dao.UserDao
 import com.example.appoftrainee.data.db.databases.UsersDatabase
+import com.example.appoftrainee.data.repositories.LocalRepository
+import com.example.appoftrainee.data.repositories.LocalRepositoryImpl
 import com.example.appoftrainee.di.scopes.ApplicationScope
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
 
-@Module
+@Module(includes = [LocalDatabaseBindsModule::class])
 class LocalDatabaseModule {
 
     @[Provides ApplicationScope]
@@ -19,4 +22,11 @@ class LocalDatabaseModule {
 
     @Provides
     fun provideUserDao(usersDatabase: UsersDatabase): UserDao = usersDatabase.getUserDao()
+}
+
+@Module
+interface LocalDatabaseBindsModule {
+
+    @Binds
+    fun bindsRepository(localRepositoryImpl: LocalRepositoryImpl): LocalRepository
 }

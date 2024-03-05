@@ -32,14 +32,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.appoftrainee.R
+import com.example.appoftrainee.ui.screens.home_screen.HomeScreenViewModel
 
 
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
-    personId: String = ""
+    personId: String = "",
 ) {
     Column(
         modifier = modifier.fillMaxSize()
