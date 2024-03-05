@@ -8,6 +8,8 @@ interface LocalRepository {
 
     fun getAllUsers(): Flow<List<UserProfile>>
 
+    suspend fun getUserById(id: String): UserProfile
+
     suspend fun addUsers(list: List<UserProfile>)
 
     suspend fun deleteAllUsers()

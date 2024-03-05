@@ -19,12 +19,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -35,14 +38,20 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.appoftrainee.R
-import com.example.appoftrainee.ui.screens.home_screen.HomeScreenViewModel
 
 
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
-    personId: String = "",
+    personId: String,
+    viewModel: DetailsScreenViewModel = viewModel()
 ) {
+    LaunchedEffect(personId) {
+        viewModel.getUserFromLocalDbById(personId)
+    }
+
+    val userData by viewModel.userDataState
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -52,21 +61,24 @@ fun DetailsScreen(
                 .size(dimensionResource(R.dimen.details_screen_photo_size))
                 .clip(CircleShape)
                 .align(Alignment.CenterHorizontally),
-            model = "https://randomuser.me/api/portraits/men/75.jpg",
-            contentDescription = stringResource(R.string.details_screen_photo_description)
+            model = userData?.photoLarge,
+            contentDescription = stringResource(R.string.details_screen_photo_description),
+            error = painterResource(R.drawable.avatar_placeholder)
         )
         Text(
             modifier = Modifier
                 .padding(bottom = dimensionResource(R.dimen.details_screen_name_padding_bottom))
                 .align(Alignment.CenterHorizontally),
-            text = "Shesterov Ilya Andreevich",
+            text = "${userData?.firstName} ${userData?.lastName}",
             style = MaterialTheme.typography.titleLarge
         )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = stringResource(
                 R.string.details_screen_name,
-                "male", 26, "1997-08-26"
+                userData?.gender ?: "",
+                userData?.age ?: 0,
+                userData?.birthDate?.let { formatDate(it) } ?: ""
             ),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(
@@ -84,27 +96,29 @@ fun DetailsScreen(
         )
         PersonsEmail(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.details_screen_field_padding_horizontal)),
-            email = "sanektisru@gmail.com"
+            email = userData?.email ?: ""
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = dimensionResource(R.dimen.details_screen_divider_padding_vertical)))
         PersonsTelephoneNumber(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.details_screen_field_padding_horizontal)),
             phoneTypeName = stringResource(R.string.details_screen_phone_home),
-            telephone = "+79994956184"
+            telephone = userData?.homePhone ?: ""
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.details_screen_telephone_spacer_height)))
         PersonsTelephoneNumber(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.details_screen_field_padding_horizontal)),
             phoneTypeName = stringResource(R.string.details_screen_phone_mobile),
-            telephone = "+73822674196"
+            telephone = userData?.mobilePhone ?: ""
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = dimensionResource(R.dimen.details_screen_divider_padding_vertical)))
         PersonsAddress(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.details_screen_field_padding_horizontal)),
-            country = "Russia",
-            state = "Siberian Federal District",
-            city = "Tomsk",
-            street = "Lomonosova 5A"
+            country = userData?.country ?: "",
+            state = userData?.state ?: "",
+            city = userData?.city ?: "",
+            street = "${userData?.streetName} ${userData?.streetNumber}",
+            latitude = userData?.latitude ?: "",
+            longitude = userData?.longitude ?: ""
         )
     }
 }
@@ -187,7 +201,9 @@ fun PersonsAddress(
     country: String,
     state: String,
     city: String,
-    street: String
+    street: String,
+    latitude: String,
+    longitude: String,
 ) {
     val context = LocalContext.current
     val address = remember {
@@ -222,8 +238,8 @@ fun PersonsAddress(
         modifier = modifier.clickable {
             showInMap(
                 context = context,
-                latitude = "56.512172",
-                longitude = "85.034196",
+                latitude = latitude,
+                longitude = longitude,
             )
         }
     ) {
@@ -239,7 +255,20 @@ fun PersonsAddress(
     }
 }
 
+private fun formatDate(date: String): String {
+    if (date.isBlank()) return ""
+
+    val stringBuilder = StringBuilder()
+    val truncatedDate = date.takeWhile { it != 'T' }
+    truncatedDate.split('-').reversed().forEach { stringBuilder.append(it).append('.') }
+    stringBuilder.deleteAt(stringBuilder.length - 1)
+
+    return stringBuilder.toString()
+}
+
 private fun composeEmail(context: Context, recipient: String) {
+    if (recipient.isBlank()) return
+
     val intent = Intent(Intent.ACTION_SENDTO).apply {
         data = Uri.parse("mailto:")
         putExtra(Intent.EXTRA_EMAIL, recipient)
@@ -250,6 +279,8 @@ private fun composeEmail(context: Context, recipient: String) {
 }
 
 private fun dialPhoneNumber(context: Context, phoneNumber: String) {
+    if (phoneNumber.isBlank()) return
+
     val intent = Intent(Intent.ACTION_DIAL).apply {
         data = Uri.parse("tel:$phoneNumber")
     }
@@ -259,6 +290,8 @@ private fun dialPhoneNumber(context: Context, phoneNumber: String) {
 }
 
 private fun showInMap(context: Context, latitude: String, longitude: String) {
+    if (latitude.isBlank() || longitude.isBlank()) return
+
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse("geo:0,0?q=$latitude,$longitude(${context.getString(R.string.details_screen_location_message)})")
     }
@@ -275,6 +308,6 @@ private const val EMAIL_ANNOTATION_TAG = "email_annotation"
 @[Composable Preview]
 fun DetailsScreenPreview() {
     Surface {
-        DetailsScreen()
+        DetailsScreen(personId = "")
     }
 }

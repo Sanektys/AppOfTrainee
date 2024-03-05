@@ -11,6 +11,8 @@ class LocalDbInteractor @Inject constructor(private val localRepositoryImpl: Loc
 
     fun getLocalDbObserver(): Flow<List<User>> = localRepositoryImpl.getAllUsers()
 
+    suspend fun getUserById(userId: String): User = localRepositoryImpl.getUserById(userId)
+
     suspend fun changeListOfUsers(newUsers: List<UserProfile>)
             = localRepositoryImpl.changeListOfUsers(newUsers)
 }

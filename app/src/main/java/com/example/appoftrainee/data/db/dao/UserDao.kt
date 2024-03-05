@@ -15,6 +15,11 @@ abstract class UserDao {
     @Query("SELECT * FROM ${UserProfile.TABLE_NAME}")
     abstract fun getAllUsers(): Flow<List<UserProfile>>
 
+    @Query("SELECT * " +
+            "FROM ${UserProfile.TABLE_NAME} " +
+            "WHERE ${UserProfile.COLUMN_ID} LIKE :id")
+    abstract suspend fun getUserById(id: String): UserProfile
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insertUsers(users: List<UserProfile>)
 

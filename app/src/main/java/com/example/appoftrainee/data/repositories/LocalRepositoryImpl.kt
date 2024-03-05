@@ -14,6 +14,10 @@ class LocalRepositoryImpl @Inject constructor(private val userDao: UserDao) : Lo
     override fun getAllUsers(): Flow<List<UserProfile>>
             = userDao.getAllUsers().flowOn(Dispatchers.IO)
 
+    override suspend fun getUserById(id: String): UserProfile = withContext(Dispatchers.IO) {
+        userDao.getUserById(id)
+    }
+
     override suspend fun addUsers(list: List<UserProfile>) = withContext(Dispatchers.IO) {
         userDao.insertUsers(list)
     }
