@@ -40,7 +40,7 @@ class HomeScreenViewModel : ViewModel() {
 
     fun getUsersList() = localDbInteractor.getLocalDbObserver().distinctUntilChanged()
 
-    fun downloadUserList() {
+    fun downloadUserList(onCompleteAction: () -> Unit = {}) {
         viewModelScope.launch {
             var newUsers = emptyList<UserProfile>()
 
@@ -57,6 +57,8 @@ class HomeScreenViewModel : ViewModel() {
             if (newUsers.isNotEmpty()) {
                 localDbInteractor.changeListOfUsers(newUsers)
             }
+
+            onCompleteAction()
         }
     }
 

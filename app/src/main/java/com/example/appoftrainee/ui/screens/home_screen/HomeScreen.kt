@@ -1,6 +1,7 @@
 package com.example.appoftrainee.ui.screens.home_screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,16 +13,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +40,7 @@ import java.util.Collections
 import kotlin.random.Random
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -41,8 +48,19 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = viewModel()
 ) {
     val userList by viewModel.getUsersList().collectAsState(initial = emptyList())
+    val refreshState = rememberPullToRefreshState()
 
-    UserList(modifier = modifier, userList = userList, clickToDetails = clickToDetails)
+    if (refreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            viewModel.downloadUserList(onCompleteAction = { refreshState.endRefresh() })
+        }
+    }
+
+    Box(modifier = modifier.nestedScroll(refreshState.nestedScrollConnection)) {
+        UserList(userList = userList, clickToDetails = clickToDetails)
+
+        PullToRefreshContainer(modifier = Modifier.align(Alignment.TopCenter), state = refreshState)
+    }
 }
 
 @Composable
