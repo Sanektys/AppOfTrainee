@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,6 +30,8 @@ import coil.compose.AsyncImage
 import com.example.appoftrainee.R
 import com.example.appoftrainee.data.User
 import com.example.appoftrainee.ui.utils.FakeUser
+import java.util.Collections
+import kotlin.random.Random
 
 
 @Composable
@@ -37,8 +40,18 @@ fun HomeScreen(
     clickToDetails: (String) -> Unit = {},
     viewModel: HomeScreenViewModel = viewModel()
 ) {
-    val lazyColumnState = rememberLazyListState()
     val userList by viewModel.getUsersList().collectAsState(initial = emptyList())
+
+    UserList(modifier = modifier, userList = userList, clickToDetails = clickToDetails)
+}
+
+@Composable
+fun UserList(
+    modifier: Modifier = Modifier,
+    userList: List<User>,
+    clickToDetails: (String) -> Unit
+) {
+    val lazyColumnState = rememberLazyListState()
 
     val dividerModifier = Modifier.padding(
         start = dimensionResource(R.dimen.home_screen_persons_list_items_photo_size)
@@ -49,6 +62,7 @@ fun HomeScreen(
         bottom = dimensionResource(R.dimen.home_screen_persons_list_items_divider_padding_bottom)
     )
     val spacerModifier = Modifier.height(dimensionResource(R.dimen.home_screen_persons_list_items_spacer_height))
+    val localView = LocalView.current
 
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -56,7 +70,13 @@ fun HomeScreen(
     ) {
         itemsIndexed(
             items = userList,
-            key = { _, user -> user.id }
+            key = { _, user ->
+                if (!localView.isInEditMode) {
+                    user.id
+                } else {
+                    Random.nextInt() // Фейковый ключ для превью чтобы оно работало
+                }
+            }
         ) { index, user ->
             if (index == 0) {
                 Spacer(modifier = spacerModifier)
@@ -122,8 +142,8 @@ fun PersonCardItem(
 
 
 @[Composable Preview]
-fun PersonCardItemPreview() {
+fun UserListPreview() {
     Surface {
-        PersonCardItem(user = FakeUser(), clickToDetails = {})
+        UserList(userList = Collections.nCopies(16, FakeUser), clickToDetails = {})
     }
 }

@@ -38,6 +38,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.appoftrainee.R
+import com.example.appoftrainee.data.User
+import com.example.appoftrainee.ui.utils.FakeUser
 
 
 @Composable
@@ -52,6 +54,11 @@ fun DetailsScreen(
 
     val userData by viewModel.userDataState
 
+    UserInfo(modifier = modifier, userData = userData)
+}
+
+@Composable
+fun UserInfo(modifier: Modifier = Modifier, userData: User?) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -63,6 +70,7 @@ fun DetailsScreen(
                 .align(Alignment.CenterHorizontally),
             model = userData?.photoLarge,
             contentDescription = stringResource(R.string.details_screen_photo_description),
+            placeholder = painterResource(R.drawable.avatar_placeholder),
             error = painterResource(R.drawable.avatar_placeholder)
         )
         Text(
@@ -306,8 +314,8 @@ private const val EMAIL_ANNOTATION_TAG = "email_annotation"
 
 
 @[Composable Preview]
-fun DetailsScreenPreview() {
+fun UserInfoPreview() {
     Surface {
-        DetailsScreen(personId = "")
+        UserInfo(userData = FakeUser)
     }
 }
