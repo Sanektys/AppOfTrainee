@@ -1,5 +1,6 @@
 package com.example.appoftrainee.ui.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -10,7 +11,11 @@ import com.example.appoftrainee.ui.screens.home_screen.HomeScreen
 
 
 @Composable
-fun NavigationGraph(modifier: Modifier = Modifier, navController: NavHostController)  {
+fun NavigationGraph(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    snackbar: () -> SnackbarHostState,
+)  {
     NavHost(
         navController = navController,
         startDestination = Screens.HomeScreen.route,
@@ -24,7 +29,8 @@ fun NavigationGraph(modifier: Modifier = Modifier, navController: NavHostControl
                     if (openedRoute != Screens.DetailsScreen.route) {
                         navController.navigate(Screens.DetailsScreen.resolveRoute(argument))
                     }
-                }
+                },
+                snackbar = snackbar
             )
         }
         composable(

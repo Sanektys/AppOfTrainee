@@ -2,6 +2,7 @@ package com.example.appoftrainee.ui.screens.details_screen
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.appoftrainee.R
 import com.example.appoftrainee.data.User
+import com.example.appoftrainee.ui.theme.AppOfTraineeTheme
 import com.example.appoftrainee.ui.utils.FakeUser
 
 
@@ -64,7 +66,9 @@ fun UserInfo(modifier: Modifier = Modifier, userData: User?) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.fillMaxSize().verticalScroll(scrollState)
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
     ) {
         AsyncImage(
             modifier = Modifier
@@ -139,9 +143,10 @@ fun UserInfo(modifier: Modifier = Modifier, userData: User?) {
 fun PersonsEmail(modifier: Modifier = Modifier, email: String) {
     val context = LocalContext.current
     val primaryColor = MaterialTheme.colorScheme.primary
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
     val emailString = remember(email) {
         buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
+            withStyle(style = SpanStyle(color = onBackgroundColor, fontWeight = FontWeight.Medium)) {
                 append(context.getString(R.string.details_screen_email) + ": ")
             }
             pushStringAnnotation(tag = EMAIL_ANNOTATION_TAG, annotation = email)
@@ -178,9 +183,10 @@ fun PersonsTelephoneNumber(
 ) {
     val context = LocalContext.current
     val primaryColor = MaterialTheme.colorScheme.primary
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
     val telephoneNumber = remember(phoneTypeName, telephone) {
         buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
+            withStyle(style = SpanStyle(color = onBackgroundColor, fontWeight = FontWeight.Medium)) {
                 append("$phoneTypeName: ")
             }
             pushStringAnnotation(tag = PHONE_NUMBER_ANNOTATION_TAG, annotation = telephone)
@@ -283,7 +289,7 @@ private fun composeEmail(context: Context, recipient: String) {
 
     val intent = Intent(Intent.ACTION_SENDTO).apply {
         data = Uri.parse("mailto:")
-        putExtra(Intent.EXTRA_EMAIL, recipient)
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
     }
     if (intent.resolveActivity(context.packageManager) != null) {
         context.startActivity(intent)
@@ -317,9 +323,12 @@ private const val PHONE_NUMBER_ANNOTATION_TAG = "phone_number_annotation"
 private const val EMAIL_ANNOTATION_TAG = "email_annotation"
 
 
-@[Composable Preview]
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
 fun UserInfoPreview() {
-    Surface {
-        UserInfo(userData = FakeUser)
+    AppOfTraineeTheme {
+        Surface {
+            UserInfo(userData = FakeUser)
+        }
     }
 }
