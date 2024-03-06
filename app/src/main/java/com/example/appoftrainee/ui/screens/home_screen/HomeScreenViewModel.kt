@@ -1,5 +1,7 @@
 package com.example.appoftrainee.ui.screens.home_screen
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appoftrainee.App
@@ -8,8 +10,6 @@ import com.example.appoftrainee.data.db.entities.UserProfile
 import com.example.appoftrainee.domain.interactors.LocalDbInteractor
 import com.example.appoftrainee.domain.interactors.RandomUserApiInteractor
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -23,8 +23,8 @@ class HomeScreenViewModel : ViewModel() {
     @Inject
     lateinit var localDbInteractor: LocalDbInteractor
 
-    private val _isDownloadFailed = MutableStateFlow(false)
-    val isDownloadFailed = _isDownloadFailed.asStateFlow()
+    private val _isDownloadFailed = mutableStateOf(false)
+    val isDownloadFailed: State<Boolean> = _isDownloadFailed
 
 
     init {
@@ -41,6 +41,8 @@ class HomeScreenViewModel : ViewModel() {
     fun getUsersList() = localDbInteractor.getLocalDbObserver().distinctUntilChanged()
 
     fun downloadUserList(onCompleteAction: () -> Unit = {}) {
+        _isDownloadFailed.value = false
+
         viewModelScope.launch {
             var newUsers = emptyList<UserProfile>()
 
@@ -50,8 +52,6 @@ class HomeScreenViewModel : ViewModel() {
                 }
                 .collect { users ->
                     newUsers = users
-
-                    _isDownloadFailed.value = false
                 }
 
             if (newUsers.isNotEmpty()) {

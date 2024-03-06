@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">AppOfTrainee</string>
 
+    <!-- Home screen-->
+    <string name="home_screen.snackbar.message">Error during data loading</string>
+    <string name="home_screen.snackbar.action_label">Retry</string>
+
 
     <!-- Details screen -->
     <string name="details_screen.photo.description">Photo of person</string>
